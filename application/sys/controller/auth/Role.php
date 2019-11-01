@@ -62,20 +62,34 @@ class Role extends BaseController
         return SuccessNotify($data);
     }
 
+    public function judgeHalfCheck($menuIdList)
+    {
+        $idx = '';
+        for($i=0;$i<count($menuIdList);$i++){
+            for($j=$i+1;$j<count($menuIdList);$j++){
+                if($menuIdList[$j]>$menuIdList[$i]){
+                    $idx = 0;
+                }else{
+                    $idx = $menuIdList[$j];
+                    return $j;
+                }
+            }
+        }
+    }
+
     //根据角色id获取角色信息
     public function info($id)
     {
         $data['role'] = $this->AuthRoleModel::get($id);
         $menuList = $data['role']->permissions;
+        $menuIdList = array();
         foreach ($menuList as $val) {
             $menuIdList[] = $val['menu_id'];
         }
-        //前端那边无法区分是否是半选中菜单，因此接口返回menuIdList时，半选中的菜单排序都放在-666666后面
-    /*    $menuIdList[5] = -666666;
-        $menuIdList[6] = 1;*/
-        $data['role']['menuIdList'] = isset($menuIdList) ? $menuIdList : [];
-//        return json($data['role']);
+
+        $data['role']['menuIdList'] = $menuList;
         unset($data['permissions']);
+
         return SuccessNotify($data);
     }
 
@@ -105,6 +119,7 @@ class Role extends BaseController
         foreach ($roleMenu->toArray() as $menu) {
             $roleMenus[] = $menu['menu_id'];
         }
+
         //将上传来的角色列表和我们转换后的角色列表转换成集合，然后利用集合的差集算出需要增加和删除的权限有哪些
         $roleMenus = collection($roleMenus);
         $updateMenu = collection($roleData['menuIdList']);

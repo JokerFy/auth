@@ -30,7 +30,11 @@ function SuccessNotify($data = [])
         'code' => 0,
         'msg' => '成功',
     );
-    $result = array_merge($result, parse_field($data));
+    try{
+        $result = array_merge($result, parse_field($data));
+    }catch (Exception $e){
+        $result = array_merge($result, $data);
+    }
     return json($result);
 }
 

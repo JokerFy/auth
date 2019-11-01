@@ -165,7 +165,8 @@ class Menu extends BaseController
          */
     public function nav()
     {
-        $userid = $this->AuthTokenModel::getIdByToken();
+        $token = request::instance()->header('token');
+        $userid = $this->AuthTokenModel::getIdByToken($token);
         $userPermisson = (new User())->userPermission($userid);
         //对菜单进行二级递归排序
         $menuList = (new Common())->treeData($userPermisson['userPermission']);

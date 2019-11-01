@@ -4,7 +4,7 @@ namespace app\sys\model;
 
 class AuthMenu extends BaseModel
 {
-    protected $table = 'le_auth_menu';
+    protected $table = 'sys_menu';
     protected $type = [
         'type' => 'integer'
     ];
@@ -12,7 +12,7 @@ class AuthMenu extends BaseModel
     //菜单拥有哪些角色
     public function roles()
     {
-        return $this->belongsToMany('AuthRole','auth_role_menu','role_id', 'menu_id');
+        return $this->belongsToMany('AuthRole','sys_role_menu','role_id', 'menu_id');
     }
 
     //删除中间表中的menu权限

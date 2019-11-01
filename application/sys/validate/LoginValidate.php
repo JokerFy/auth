@@ -13,7 +13,7 @@ class LoginValidate extends BaseValidate
     protected $rule = [
         'username' => 'require|min:4|accountValidation',
         'password' => 'require|min:6',
-        'captcha'  =>  'require|captchaValidation'
+//        'captcha'  =>  'require|captchaValidation'
     ];
 
     //验证码验证

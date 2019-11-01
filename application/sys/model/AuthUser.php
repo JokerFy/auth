@@ -5,7 +5,7 @@ use app\lib\Safe;
 
 class AuthUser extends BaseModel
 {
-    protected $table = "le_auth_user";
+    protected $table = "sys_user";
     protected $autoWriteTimestamp = 'datetime';
     protected $updateTime = false;
     protected $type = [
@@ -15,7 +15,7 @@ class AuthUser extends BaseModel
     //用户有哪些角色(多对多)
     public function roles()
     {
-        return $this->belongsToMany('AuthRole','auth_user_role','role_id','user_id');
+        return $this->belongsToMany('AuthRole','sys_user_role','role_id','user_id');
     }
 
     //用户的token

@@ -5,9 +5,8 @@ namespace app\sys\model;
 class AuthRole extends BaseModel
 {
 
-    protected $table = 'le_auth_role';
+    protected $table = 'sys_role';
     protected $hidden = ['pivot', 'create_user_id'];
-    protected $autoWriteTimestamp = true;
     protected $updateTime = false;
     protected $type = [
         'role_id' => 'integer',
@@ -22,7 +21,7 @@ class AuthRole extends BaseModel
     //当前角色的所有权限
     public function permissions()
     {
-        return $this->belongsToMany('AuthMenu', 'auth_role_menu', 'menu_id', 'role_id');
+        return $this->belongsToMany('AuthMenu', 'sys_role_menu', 'menu_id', 'role_id');
     }
 
     //添加一个角色

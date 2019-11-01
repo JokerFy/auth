@@ -41,7 +41,8 @@ class User extends BaseController
      */
     public function info($id = '')
     {
-        $userid = $this->AuthTokenModel::getIdByToken();
+        $token = request::instance()->header('token');
+        $userid = $this->AuthTokenModel::getIdByToken($token);
         //如果不存在指定id则获取当前登录用户信息
         $data['user'] = empty($id) ? $data['user'] = $this->AuthUserModel->get($userid) : $data['user'] = $this->AuthUserModel->get($id);
         //roles是目前登录用户拥有的角色列表，roleIdList是获取的指定用户所拥有的角色列表
@@ -101,13 +102,16 @@ class User extends BaseController
             //将上传来的角色列表和我们转换后的角色列表转换成集合，然后利用集合的差集算出需要增加和删除的权限有哪些
             $userRoles = collection($userRoles);
             $updateRole = collection($data['roleIdList']);
-            $addRoles = $updateRole->diff($userRoles);
+/*            $addRoles = $updateRole->diff($userRoles);
             $deleteRoles = $userRoles->diff($updateRole);
             foreach ($addRoles as $role) {
                 $user->assignRole($role);
-            }
-            foreach ($deleteRoles as $role) {
+            }*/
+            foreach ($userRoles as $role) {
                 $user->deleteRole($role);
+            }
+            foreach ($updateRole as $role) {
+                $user->assignRole($role);
             }
         } else {
             $user->assignRole($data['roleIdList']);
@@ -132,7 +136,6 @@ class User extends BaseController
         $userPermission = [];
         //获取用户所有的访问控制器方法的权限
         $userAccess = [];
-
         //$userRoles是一个二维数组，进行嵌套循环所有每个角色数组下的权限
         foreach ($userRoles as $key => $value) {
             foreach ($value->permissions->hidden(['pivot']) as $item => $val) {

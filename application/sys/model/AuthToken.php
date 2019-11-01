@@ -7,7 +7,7 @@ use think\Request;
 
 class AuthToken extends BaseModel
 {
-    protected $table = "le_auth_user_token";
+    protected $table = "sys_user_token";
     protected $hidden = ['update_time'];
 
 
@@ -41,8 +41,8 @@ class AuthToken extends BaseModel
         self::create([
             'user_id' => $id,
             'token' => $tokenData['token'],
-            'expire_time' => $tokenData['expire'],
-            'update_time' => time()
+            'expire_time' => date("Y-m-d H:i:s",$tokenData['expire']),
+            'update_time' => date("Y-m-d H:i:s",time())
         ]);
     }
 
@@ -53,8 +53,8 @@ class AuthToken extends BaseModel
         self::update([
             'user_id' => $id,
             'token' => $tokenData['token'],
-            'expire_time' => $tokenData['expire'],
-            'update_time' => time()
+            'expire_time' => date("Y-m-d H:i:s",$tokenData['expire']),
+            'update_time' => date("Y-m-d H:i:s",time())
         ]);
     }
 }
