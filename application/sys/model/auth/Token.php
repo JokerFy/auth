@@ -1,11 +1,12 @@
 <?php
 
-namespace app\sys\model;
+namespace app\sys\model\auth;
 
+use app\sys\model\BaseModel;
 use app\lib\Safe;
 use think\Request;
 
-class AuthToken extends BaseModel
+class Token extends BaseModel
 {
     protected $table = "sys_user_token";
     protected $hidden = ['update_time'];
@@ -13,7 +14,7 @@ class AuthToken extends BaseModel
 
     public function user()
     {
-        return $this->hasOne('AuthUser', 'user_id', 'user_id');
+        return $this->hasOne('User', 'user_id', 'user_id');
     }
 
 

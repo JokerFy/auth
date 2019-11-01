@@ -4,7 +4,7 @@ namespace app\sys\controller;
 
 use think\Controller;
 use app\sys\model\{
-    AuthUser, AuthToken
+    User, Token
 };
 use app\sys\validate\LoginValidate;
 use app\lib\Safe;
@@ -19,15 +19,15 @@ class Common extends Controller
     public function login()
     {
         (new LoginValidate)->goCheck();
-        $adminSalt = AuthUser::get(['username' => input('username')]);
-        $admin = AuthUser::get([
+        $adminSalt = User::get(['username' => input('username')]);
+        $admin = User::get([
             'username' => input('username'),
             'password' => Safe::setpassword(input('password'), $adminSalt->salt)
         ]);
         //每次登录更新用户token
-        AuthToken::updateToken($admin->user_id);
+        Token::updateToken($admin->user_id);
         //获取用户token并返回
-        return SuccessNotify(AuthToken::usertoken($admin->user_id));
+        return SuccessNotify(Token::usertoken($admin->user_id));
     }
 
     /**
@@ -37,10 +37,10 @@ class Common extends Controller
     {
         Db::startTrans();
         //生成管理员
-        $user = AuthUser::createUser(input('username'), input('password'));
+        $user = User::createUser(input('username'), input('password'));
         if ($user) {
             //生成管理员token到关联表
-            $token = AuthToken::createToken($user->id);
+            $token = Token::createToken($user->id);
             if ($token){
                 //创建管理员和token都成功则提交
                 Db::commit();

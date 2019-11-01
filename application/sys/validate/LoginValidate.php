@@ -5,7 +5,7 @@ namespace app\sys\validate;
 use app\common\exception\ParameterException;
 use app\common\validate\BaseValidate;
 use app\lib\Safe;
-use app\sys\model\AuthUser;
+use app\sys\model\User;
 use think\captcha\Captcha;
 
 class LoginValidate extends BaseValidate
@@ -30,10 +30,10 @@ class LoginValidate extends BaseValidate
     //账号验证
     protected function accountValidation($value,$rule,$data)
     {
-        $adminSalt = AuthUser::get(['username' =>$value]);
+        $adminSalt = User::get(['username' =>$value]);
         if($adminSalt){
             $password = Safe::setpassword($data['password'], $adminSalt->salt);
-            $admin = AuthUser::get([
+            $admin = User::get([
                 'username' => $value,
                 'password' => $password
             ]);

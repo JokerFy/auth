@@ -1,9 +1,10 @@
 <?php
 
-namespace app\sys\model;
+namespace app\sys\model\auth;
 use app\lib\Safe;
+use app\sys\model\BaseModel;
 
-class AuthUser extends BaseModel
+class User extends BaseModel
 {
     protected $table = "sys_user";
     protected $autoWriteTimestamp = 'datetime';
@@ -15,12 +16,12 @@ class AuthUser extends BaseModel
     //用户有哪些角色(多对多)
     public function roles()
     {
-        return $this->belongsToMany('AuthRole','sys_user_role','role_id','user_id');
+        return $this->belongsToMany('Role','sys_user_role','role_id','user_id');
     }
 
     //用户的token
     public function usertoken(){
-        return $this->hasOne('AuthToken','user_id','user_id');
+        return $this->hasOne('Token','user_id','user_id');
     }
 
     //判断是否有哪些角色

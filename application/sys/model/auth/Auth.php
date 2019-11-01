@@ -6,7 +6,7 @@
  * Time: 23:26
  */
 
-namespace app\sys\model;
+namespace app\sys\model\auth;
 
 use app\common\exception\AuthAccessException;
 
@@ -21,9 +21,9 @@ class Auth
         throw (new AuthAccessException([
             'msg'=>$access
         ]));
-        $uid = empty($uid)??(new AuthToken())::getIdByToken();
+        $uid = empty($uid)??(new Token())::getIdByToken();
         //获取用户
-        $user = (new AuthUser())->get($uid);
+        $user = (new User())->get($uid);
         //获取用户所有的角色
         $userRoles = $user->roles;
         //获取用户所有的访问控制器方法的权限

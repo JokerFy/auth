@@ -1,8 +1,9 @@
 <?php
 
-namespace app\sys\model;
+namespace app\sys\model\auth;
 
-class AuthRole extends BaseModel
+use app\sys\model\BaseModel;
+class Role extends BaseModel
 {
 
     protected $table = 'sys_role';
@@ -21,7 +22,7 @@ class AuthRole extends BaseModel
     //当前角色的所有权限
     public function permissions()
     {
-        return $this->belongsToMany('AuthMenu', 'sys_role_menu', 'menu_id', 'role_id');
+        return $this->belongsToMany('Menu', 'sys_role_menu', 'menu_id', 'role_id');
     }
 
     //添加一个角色
@@ -54,7 +55,7 @@ class AuthRole extends BaseModel
         $res = self::create([
             'role_name' => $data['roleName'],
             'remark'=>$data['remark'],
-            'create_user_id'=>(new AuthToken())->getIdByToken()
+            'create_user_id'=>(new Token())->getIdByToken()
         ]);
         return $res->role_id;
     }

@@ -16,6 +16,8 @@ class BaseController extends Controller
     protected $AuthTokenModel;
     protected $AuthRoleModel;
     protected $AuthUserModel;
+    protected $token;
+    protected $user_id;
 
     public function _initialize()
     {
@@ -30,6 +32,8 @@ class BaseController extends Controller
         $this->AuthTokenModel = ModelFactory::AuthToken();
         $this->AuthRoleModel = ModelFactory::AuthRole();
         $this->AuthUserModel = ModelFactory::AuthUser();
+        $this->token = request::instance()->header('token');
+        $this->user_id = $this->AuthTokenModel::getIdByToken($this->token);
     }
 
 

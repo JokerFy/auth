@@ -9,7 +9,7 @@
 namespace app\sys\validate;
 use app\common\exception\TokenException;
 use app\common\validate\BaseValidate;
-use app\sys\model\AuthToken;
+use app\sys\model\Token;
 
 class SysTokenValidate extends BaseValidate
 {
@@ -20,7 +20,7 @@ class SysTokenValidate extends BaseValidate
     //判断token是否是有效的
     protected function tokenValidation($value)
     {
-        $res = (new AuthToken())->get(['token'=>$value]);
+        $res = (new Token())->get(['token'=>$value]);
         if(!$res)
             throw new TokenException();
         return true;

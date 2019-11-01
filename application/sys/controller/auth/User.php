@@ -4,10 +4,22 @@ namespace app\sys\controller\auth;
 
 use app\sys\controller\BaseController;
 use app\sys\model\Auth;
+use app\sys\service\auth\UserService;
+use app\sys\validate\auth\UserValidate;
 use think\Request;
 
 class User extends BaseController
 {
+    public $userSevice;
+    public $userValidate;
+
+    public function __construct(Request $request = null)
+    {
+        parent::__construct($request);
+        $this->userSevice = new UserService();
+        $this->userValidate = new UserValidate();
+    }
+
     /**
      * 获取管理员列表
      * @auth: finley
@@ -39,35 +51,22 @@ class User extends BaseController
      * 'createTime': 'datetime'
      * }}
      */
-    public function info($id = '')
+    public function info($id = 0)
     {
-        $token = request::instance()->header('token');
-        $userid = $this->AuthTokenModel::getIdByToken($token);
         //如果不存在指定id则获取当前登录用户信息
-        $data['user'] = empty($id) ? $data['user'] = $this->AuthUserModel->get($userid) : $data['user'] = $this->AuthUserModel->get($id);
-        //roles是目前登录用户拥有的角色列表，roleIdList是获取的指定用户所拥有的角色列表
-        $roles = $data['user']->roles;
-        if (!empty($roles)) {
-            foreach ($roles->toArray() as $val) {
-                $roleIdList[] = $val['role_id'];
-            }
+        if(!$id){
+            $id = $this->user_id;
         }
-        $data['user']['roleIdList'] = isset($roleIdList) ? $roleIdList : [];
+        $this->userValidate->UserIdValidation($id);
+        $data = $this->userSevice->getInfo($id);
         return SuccessNotify($data);
     }
 
-    //删除用户
+    //删除用户(可批量)
     public function delete()
     {
-        $userIds = $this->request->post();
-        $users = $this->AuthUserModel::all($userIds);
-        foreach ($users as $key => $val) {
-            //获取每个用户角色，然后删除
-            $roles[$key] = $val->roles;
-            $val->deleteRole($roles[$key]);
-            $val->delete();
-            $this->AuthTokenModel::destroy(['user_id'=>$val['user_id']]);
-        }
+        $ids = $this->request->post();
+        $this->userSevice->delete($ids);
         return SuccessNotify();
     }
 
@@ -75,12 +74,7 @@ class User extends BaseController
     public function save()
     {
         $data = $this->request->post();
-        $addUser = $this->AuthUserModel->createUser($data);
-        $user = $this->AuthUserModel->get($addUser);
-        //分配权限
-        $user->assignRole($data['roleIdList']);
-        //生成管理员token到关联表
-        $this->AuthTokenModel::createToken($user->user_id);
+        $this->userSevice->save($data);
         return SuccessNotify();
     }
 
