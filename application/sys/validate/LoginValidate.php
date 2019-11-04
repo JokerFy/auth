@@ -5,7 +5,8 @@ namespace app\sys\validate;
 use app\common\exception\ParameterException;
 use app\common\validate\BaseValidate;
 use app\lib\Safe;
-use app\sys\model\User;
+
+use app\sys\model\auth\User;
 use think\captcha\Captcha;
 
 class LoginValidate extends BaseValidate

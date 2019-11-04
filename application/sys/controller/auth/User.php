@@ -5,6 +5,7 @@ namespace app\sys\controller\auth;
 use app\sys\controller\BaseController;
 use app\sys\model\Auth;
 use app\sys\service\auth\UserService;
+use app\sys\validate\auth\AddUserValidate;
 use app\sys\validate\auth\UserValidate;
 use think\Request;
 
@@ -74,6 +75,7 @@ class User extends BaseController
     public function save()
     {
         $data = $this->request->post();
+        $this->userValidate->goCheck();
         $this->userSevice->save($data);
         return SuccessNotify();
     }
@@ -82,40 +84,8 @@ class User extends BaseController
     public function update()
     {
         $data = $this->request->post();
-        //更新用户
-        $this->AuthUserModel->updateUser($data);
-        //手动获取用户，因为save方法返回的不是数据集
-        $user = $this->AuthUserModel->get($data['userId']);
-        //获取目前更新的用户的所有角色
-        $userRole = $user->roles;
-        //因为上传来的角色列表格式与我们数据库取得不一样，需要转换一下
-        if (!$userRole->isEmpty()) {
-            foreach ($userRole->toArray() as $role) {
-                $userRoles[] = $role['role_id'];
-            }
-            //将上传来的角色列表和我们转换后的角色列表转换成集合，然后利用集合的差集算出需要增加和删除的权限有哪些
-            $userRoles = collection($userRoles);
-            $updateRole = collection($data['roleIdList']);
-/*            $addRoles = $updateRole->diff($userRoles);
-            $deleteRoles = $userRoles->diff($updateRole);
-            foreach ($addRoles as $role) {
-                $user->assignRole($role);
-            }*/
-            foreach ($userRoles as $role) {
-                $user->deleteRole($role);
-            }
-            foreach ($updateRole as $role) {
-                $user->assignRole($role);
-            }
-        } else {
-            $user->assignRole($data['roleIdList']);
-        }
-        return SuccessNotify();
-    }
-
-    //修改当前用户密码
-    public function password()
-    {
+        $this->userValidate->goCheck();
+        $this->userSevice->update($data);
         return SuccessNotify();
     }
 
@@ -157,14 +127,6 @@ class User extends BaseController
             'userAccess' => $userAccess
         ];
         return $data;
-    }
-
-    public function test()
-    {
-        $request = Request::instance();
-        $access = $request->module() . ':' . $request->controller() . ':' . $request->action();
-        $userAccess = (new Auth())->check($access);
-        return json($access);
     }
 
 }

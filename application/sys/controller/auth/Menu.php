@@ -4,6 +4,8 @@ namespace app\sys\controller\auth;
 
 use app\sys\controller\Common;
 use app\sys\controller\BaseController;
+use app\sys\service\auth\MenuService;
+use app\sys\validate\auth\MenuValidate;
 use think\Request;
 
 /**
@@ -54,6 +56,15 @@ use think\Request;
  */
 class Menu extends BaseController
 {
+    public $menuSevice;
+    public $menuValidate;
+
+    public function __construct(Request $request = null)
+    {
+        parent::__construct($request);
+        $this->menuSevice = new MenuService();
+        $this->menuValidate = new MenuValidate();
+    }
     /**
      * 菜单列表格式如下
          var dataList = [
@@ -74,41 +85,22 @@ class Menu extends BaseController
      */
     public function list()
     {
-        $data = $this->AuthMenuModel::all();
-        //给菜单增加一个上级菜单的属性
-        foreach ($data as $key => $val) {
-            foreach ($data as $item) {
-                if ($val['parent_id'] == $item['menu_id']) {
-                    $data[$key]['parent_name'] = $item['name'];
-                } elseif ($val['parent_id'] == 0) {
-                    $data[$key]['parent_name'] = '';
-                }
-            }
-        }
+        $data = $this->menuSevice->list();
         return SuccessNoMsg($data);
     }
 
     //获得菜单信息
     public function info($id)
     {
-        $data['menu'] = $this->AuthMenuModel::get($id);
+        $this->menuValidate->menuIdValidation($id);
+        $data['menu'] = $this->menuSevice->info($id);
         return SuccessNotify($data);
     }
 
     //获取上级菜单
     public function select()
     {
-        $data['menuList'] = $this->AuthMenuModel::all();
-        //给菜单增加一个上级菜单的属性
-        foreach ($data['menuList'] as $key => $val) {
-            foreach ($data['menuList'] as $item) {
-                if ($val['parent_id'] == $item['menu_id']) {
-                    $data['menuList'][$key]['parent_name'] = $item['name'];
-                } elseif ($val['parent_id'] == 0) {
-                    $data['menuList'][$key]['parent_name'] = '';
-                }
-            }
-        }
+        $data['menuList'] = $this->menuSevice->select();
         return SuccessNotify($data);
     }
 
@@ -131,18 +123,8 @@ class Menu extends BaseController
     //删除菜单（如果有子菜单则一起删除，包括中间表和菜单表）
     public function delete($id)
     {
-        $menu = $this->AuthMenuModel::get(['menu_id'=>$id]);
-        $childMenu = $this->AuthMenuModel::all(['parent_id'=>$id]);
-        //获取菜单在中间表匹配的角色
-        $menusRole = $menu->roles;
-        //删除中间表和菜单表数据
-        $menu->deleteMenu($menusRole);
-        $menu->delete();
-        foreach ($childMenu as $val){
-            $childMenuRole = $val->roles;
-            $val->deleteMenu($childMenuRole);
-            $val->delete();
-        }
+        $this->menuValidate->menuIdValidation($id);
+        $this->menuSevice->delete($id);
         return SuccessNotify();
     }
 
@@ -165,12 +147,7 @@ class Menu extends BaseController
          */
     public function nav()
     {
-        $token = request::instance()->header('token');
-        $userid = $this->AuthTokenModel::getIdByToken($token);
-        $userPermisson = (new User())->userPermission($userid);
-        //对菜单进行二级递归排序
-        $menuList = (new Common())->treeData($userPermisson['userPermission']);
-        $data = ['menuList' => $menuList, 'permissions' => $userPermisson['userAccess']];
+        $data = $this->menuSevice->nav($this->user_id);
         return SuccessNotify($data);
     }
 }

@@ -3,7 +3,7 @@
 namespace app\sys\controller;
 
 use think\Controller;
-use app\sys\model\{
+use app\sys\model\auth\{
     User, Token
 };
 use app\sys\validate\LoginValidate;

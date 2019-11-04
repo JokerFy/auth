@@ -37,6 +37,21 @@ class BaseValidate extends Validate
         return true;
     }
 
+
+    public function checkFieldByRule($data,$rule)
+    {
+        if (!$this->check($data,$rule)) {
+            $exception = new ParameterException(
+                [
+                    // $this->error有一个问题，并不是一定返回数组，需要判断
+                    'msg' => is_array($this->error) ? implode(
+                        ';', $this->error) : $this->error,
+                ]);
+            throw $exception;
+        }
+        return true;
+    }
+
     /**
      * @param array $arrays 通常传入request.post变量数组
      * @return array 按照规则key过滤后的变量数组
@@ -51,8 +66,17 @@ class BaseValidate extends Validate
             ]);
         }
         $newArray = [];
+        if (!$this->check($arrays)) {
+            $exception = new ParameterException(
+                [
+                    // $this->error有一个问题，并不是一定返回数组，需要判断
+                    'msg' => is_array($this->error) ? implode(
+                        ';', $this->error) : $this->error,
+                ]);
+            throw $exception;
+        }
         foreach ($this->rule as $key => $value) {
-            $newArray[$key] = $arrays[$key];
+             $newArray[$key] = $arrays[$key];
         }
         return $newArray;
     }
