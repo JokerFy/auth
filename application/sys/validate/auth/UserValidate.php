@@ -19,7 +19,7 @@ class UserValidate extends BaseValidate
         'email' =>  'email',
         'password' =>  'require',
         'mobile' =>  'require|isMobile',
-        'nickname' =>  'require|max:25',
+//        'nickname' =>  'require|max:25',
     ];
 
     protected $message = [
@@ -27,7 +27,7 @@ class UserValidate extends BaseValidate
         'email' =>  '邮箱格式错误',
         'password' =>  '密码格式错误',
         'mobile' =>  '手机号格式错误',
-        'nickname' =>  '昵称格式错误',
+//        'nickname' =>  '昵称格式错误',
     ];
 
     public function checkPost($data){

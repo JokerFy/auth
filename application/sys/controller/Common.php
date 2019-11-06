@@ -9,6 +9,7 @@ use app\sys\model\auth\{
 use app\sys\validate\LoginValidate;
 use app\lib\Safe;
 use think\Db;
+use think\Request;
 
 class Common extends Controller
 {
@@ -19,10 +20,11 @@ class Common extends Controller
     public function login()
     {
         (new LoginValidate)->goCheck();
-        $adminSalt = User::get(['username' => input('username')]);
+        $data = Request::instance()->param();
+        $adminSalt = User::get(['username' => $data['username']]);
         $admin = User::get([
             'username' => input('username'),
-            'password' => Safe::setpassword(input('password'), $adminSalt->salt)
+            'password' => Safe::setpassword($data['password'], $adminSalt->salt)
         ]);
         //每次登录更新用户token
         Token::updateToken($admin->user_id);

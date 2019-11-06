@@ -27,7 +27,7 @@ function getRandChar($length)
 function SuccessNotify($data = [])
 {
     $result = array(
-        'code' => 0,
+        'code' => 20000,
         'msg' => '成功',
     );
     try{

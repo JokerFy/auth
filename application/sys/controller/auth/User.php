@@ -31,7 +31,8 @@ class User extends BaseController
      */
     public function list($page = 1, $limit = 10)
     {
-        $data = $this->pageList($this->AuthUserModel, $page, $limit);
+        $listQuery = Request::instance()->param();
+        $data = $this->pageList($this->AuthUserModel,$listQuery, $page, $limit);
         return SuccessNotify($data);
     }
 
@@ -66,7 +67,7 @@ class User extends BaseController
     //删除用户(可批量)
     public function delete()
     {
-        $ids = $this->request->post();
+        $ids = $this->request->param();
         $this->userSevice->delete($ids);
         return SuccessNotify();
     }
@@ -74,7 +75,7 @@ class User extends BaseController
     //增加用户
     public function save()
     {
-        $data = $this->request->post();
+        $data = $this->request->param();
         $this->userValidate->goCheck();
         $this->userSevice->save($data);
         return SuccessNotify();
@@ -83,7 +84,7 @@ class User extends BaseController
     //修改用户
     public function update()
     {
-        $data = $this->request->post();
+        $data = $this->request->param();
         $this->userValidate->goCheck();
         $this->userSevice->update($data);
         return SuccessNotify();

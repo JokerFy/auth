@@ -22,7 +22,7 @@ class BaseController extends Controller
     public function _initialize()
     {
         //判断是否有token并且token是否有效
-//        (new SysTokenValidate())->goCheck();
+        (new SysTokenValidate())->goCheck();
 
         $request = Request::instance();
         $access = $request->module() . ':' . $request->controller() . ':' . $request->action();
@@ -46,13 +46,21 @@ class BaseController extends Controller
      * @param int $limit 每页显示数量
      * @return mixed
      */
-    public function pageList($model,$page=1,$limit=10)
+    public function pageList($model,$condition,$page=1,$limit=10)
     {
+        if($condition['page']){
+            $page = $condition['page'];
+            unset($condition['page']);
+        }
+        if($condition['limit']){
+            $limit = $condition['limit'];
+            unset($condition['limit']);
+        }
         //取出所有数据
-        $modelData = $model::all();
+        $modelData = $model::all($condition);
         //分页处理
         $pageOffset = ($page-1)*$limit;
-        $pageList = $model->limit($pageOffset,$limit)->select();
+        $pageList = $model->where($condition)->limit($pageOffset,$limit)->select();
         $totalCount = count($modelData);
         //根据接口信息对数据进行分页
         $page = [

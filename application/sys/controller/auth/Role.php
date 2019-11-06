@@ -50,7 +50,8 @@ class Role extends BaseController
 
     public function list($page = 1, $limit = 10)
     {
-        $data = $this->pageList($this->AuthRoleModel, $page, $limit);
+        $listQuery = Request::instance()->param();
+        $data = $this->pageList($this->AuthRoleModel,$listQuery, $page, $limit);
         return SuccessNotify($data);
     }
 
@@ -72,7 +73,7 @@ class Role extends BaseController
     //创建角色
     public function save()
     {
-        $roleData = $this->request->post();
+        $roleData = $this->request->param();
         $this->roleSevice->save($roleData);
         return SuccessNotify();
     }
@@ -80,7 +81,7 @@ class Role extends BaseController
     //修改角色
     public function update()
     {
-        $roleData = $this->request->post();
+        $roleData = $this->request->param();
         $this->roleSevice->update($roleData);
         return SuccessNotify();
     }

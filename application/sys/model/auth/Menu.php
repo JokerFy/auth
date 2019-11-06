@@ -23,27 +23,4 @@ class Menu extends BaseModel
         return $this->roles()->detach($menu);
     }
 
-    public function createMenu($data){
-        self::create([
-            'parent_id'=>$data['parentId'],
-            'name'=>$data['name'],
-            'icon'=>$data['icon'],
-            'url'=>$data['url'],
-            'perms'=>$data['perms'],
-            'type'=>$data['type'],
-            'order_num'=>$data['orderNum']
-        ]);
-    }
-
-    public function updateMenu($data){
-        self::save([
-            'parent_id'=>$data['parentId'],
-            'name'=>$data['name'],
-            'icon'=>$data['icon'],
-            'url'=>$data['url'],
-            'perms'=>$data['perms'],
-            'type'=>$data['type'],
-            'order_num'=>$data['orderNum']
-        ],['menu_id'=>$data['menuId']]);
-    }
 }

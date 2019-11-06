@@ -75,7 +75,7 @@ class User extends BaseModel
             'status'=>$data['status'],
             'mobile'=>$data['mobile'],
             'email'=>$data['email'],
-        ],['user_id'=>$data['userId']]);
+        ],['user_id'=>$data['user_id']]);
         return $res;
     }
 }

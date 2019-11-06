@@ -94,7 +94,7 @@ class UserService
         //更新用户
         $this->userModel->updateUser($data);
         //手动获取用户，因为save方法返回的不是数据集
-        $user = $this->userModel->get($data['userId']);
+        $user = $this->userModel->get($data['user_id']);
         //获取目前更新的用户的所有角色
         $userRole = $user->roles;
         //因为上传来的角色列表格式与我们数据库取得不一样，需要转换一下

@@ -85,8 +85,8 @@ class Menu extends BaseController
      */
     public function list()
     {
-        $data = $this->menuSevice->list();
-        return SuccessNoMsg($data);
+        $data['menu'] = $this->menuSevice->list();
+        return SuccessNotify($data);
     }
 
     //获得菜单信息
@@ -107,16 +107,16 @@ class Menu extends BaseController
     //添加菜单
     public function save()
     {
-        $data = $this->request->post();
-        $this->AuthMenuModel->createMenu($data);
+        $data = $this->request->param();
+        $this->menuSevice->save($data);
         return SuccessNotify();
     }
 
     //修改菜单
     public function update()
     {
-        $data = $this->request->post();
-        $this->AuthMenuModel->updateMenu($data);
+        $data = $this->request->param();
+        $this->menuSevice->update($data);
         return SuccessNotify();
     }
 

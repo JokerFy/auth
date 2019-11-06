@@ -62,6 +62,32 @@ class MenuService
         return $data;
     }
 
+    public function save($data){
+        $res = [
+            'parent_id'=>$data['parentId'],
+            'name'=>$data['name'],
+            'icon'=>$data['icon'],
+            'url'=>$data['url'],
+            'perms'=>$data['perms'],
+            'type'=>$data['type'],
+            'order_num'=>$data['orderNum']
+        ];
+        return $this->menuModel::create($res);
+    }
+
+    public function update($data){
+        $res = [
+            'parent_id'=>$data['parentId'],
+            'name'=>$data['name'],
+            'icon'=>$data['icon'],
+            'url'=>$data['url'],
+            'perms'=>$data['perms'],
+            'type'=>$data['type'],
+            'order_num'=>$data['orderNum']
+        ];
+        return $this->menuModel::save($res,['menu_id'=>$data['menuId']]);
+    }
+
     public function delete($id){
         $menu = $this->menuModel::get(['menu_id'=>$id]);
         $childMenu = $this->menuModel::all(['parent_id'=>$id]);
